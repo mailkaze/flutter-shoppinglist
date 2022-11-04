@@ -11,6 +11,7 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> listenAuthState() async {
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      print('logeado: ${user?.email ?? 'Sin usuario'}');
       if (user == null) {
         _loggedIn = false;
       } else {

@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_shoppinglist/providers/auth_provider.dart';
+import 'package:flutter_shoppinglist/screens/login_screen.dart';
 import 'package:flutter_shoppinglist/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
@@ -9,15 +11,23 @@ class ListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
-    print('logeado: ${authProvider.loggedIn}');
+
+    if (!authProvider.loggedIn) {
+      return LoginScreen();
+    }
 
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
         actions: [
           IconButton(
-            onPressed: () {
-              Navigator.pushNamed(context, 'login');
+            onPressed: () async {
+              if (authProvider.loggedIn == true) {
+                await FirebaseAuth.instance.signOut();
+              }
+
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                  'login', (Route<dynamic> route) => false);
             },
             icon: Icon(Icons.account_circle),
             iconSize: 38,
